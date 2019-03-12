@@ -164,7 +164,20 @@ const Flower = ({
   </svg>
 );
 
+// from: https://codesandbox.io/embed/rj998k4vmm
+const calc = (x, y) => [
+  -(y - window.innerHeight / 2) / 20,
+  (x - window.innerWidth / 2) / 20,
+  1.1,
+];
+const trans = (x, y, s) =>
+  `translate(calc(50vw - 50%),calc(50vh - 50%)) perspective(600px) rotateX(${x}deg) rotateY(${y}deg) scale(${s})`;
+
 function App() {
+  const [props, set] = useSpring(() => ({
+    xys: [0, 0, 1],
+    config: { mass: 5, tension: 350, friction: 40 },
+  }));
   const clock = useClock();
   const N = 12;
   const dim = 30 + (2 * Math.random() - 1);
@@ -181,15 +194,19 @@ function App() {
 
   return (
     <>
-      <svg
+      <animated.svg
         viewBox="0 0 200 200"
-        height={'100vh'}
+        height={'90vh'}
         style={{
           position: 'absolute',
           left: '50%',
           top: '50%',
-          transform: 'translate(-50%,-50%)',
         }}
+        onMouseMove={({ clientX: x, clientY: y }) =>
+          set({ xys: calc(x, y) })
+        }
+        onMouseLeave={() => set({ xys: [0, 0, 1] })}
+        style={{ transform: props.xys.interpolate(trans) }}
       >
         <g
           transform={`translate(100 100) scale(1.5) translate(-100 -100) translate(50 50)`}
@@ -287,7 +304,7 @@ function App() {
             </text>
           </g>
         </svg>
-      </svg>
+      </animated.svg>
     </>
   );
 }
