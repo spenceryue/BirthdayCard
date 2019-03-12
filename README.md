@@ -1,2 +1,0 @@
-# BirthdayCard
-Created with CodeSandbox
